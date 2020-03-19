@@ -1,0 +1,35 @@
+1.	Qual o objetivo do comando cache em Spark?
+
+O objetivo do cache é melhorar a performance da aplicação através do armazenamento de dados/objetos em memória. Os dados armazenados através do cache podem ser consultados sempre que necessário, evitando a leitura das informações em sua origem novamente. 
+
+2.	O mesmo código implementado em Spark é normalmente mais rápido que a implementação equivalente em MapReduce. Por quê?
+
+O Spark apresenta melhor performance em relação ao MapReduce por implementar métodos que permitem o processamento em memória. O Spark faz uso de Resilient Distributed Datasets (RDDs) o qual implementa estruturas de dados em memória e que são utilizadas para armazenar em cache os dados existentes entre os nós de um cluster. Uma vez que as RDDs ficam em memória, os algorítimos podem interagir nesta área de RDD várias vezes de forma eficiente.
+
+3.	Qual é a função do SparkContext ?
+
+O SparkContext funciona como uma espécie de regente entre o seu código e o cluster, para a execução da aplicação.
+Ele ficará responsável pela conexão com este servidor. É através dele que criamos os RDDs, accumulators e transmitimos as variáveis ao cluster. Apenas um SparkContext pode estar ativo por JVM. Você deve parar o SparkContext ativo antes de criar um novo.
+
+4.	Explique com suas palavras o que é Resilient Distributed Datasets (RDD).
+
+Um RDD no Spark é simplesmente uma coleção imutável de objetos distribuídos. Cada RDD é dividido em várias partições, que podem ser computadas em diferentes nós do cluster. Os RDDs podem conter qualquer tipo de objeto Python, Java ou Scala, incluindo os definidos pelo usuário.
+
+5.	GroupByKey é menos eficiente que reduceByKey em grandes dataset. Por quê?
+
+Ao aplicar groupByKey em um conjunto de dados de pares (chave, valor), os dados são cruzados de acordo com o valor da chave K em outro RDD. Nessa transformação, muitos dados desnecessários são transferidos pela rede.
+No reduceByKey, antes de cruzar os dados pela rede, os pares de dados na mesma máquina com as mesmas chaves são combinados, o que aumenta a performance do agrupamento em caso de grandes datasets, pois menos informações são trafegadas entre os nós.
+
+6.	Explique o que o código Scala abaixo faz.
+
+    0. 	val textFile = sc . textFile ( "hdfs://..." )
+    1. 	val counts = textFile . flatMap ( line => line . split ( " " ))
+    2.	.map ( word => ( word , 1 ))
+    3.	.reduceByKey ( _ + _ )
+    4.	counts . saveAsTextFile ( "hdfs://..." ) 
+
+Linha 0: Carrega o arquivo que está armazenado no hdfs para a constante/RDD textFile
+Linha 1: Separa as palavras de cada linha utilizando o caractere espaço (“ ”) e armazena na constante/RDD counts.
+Linha 2: Cria os pares (chave, valor) com todas as palavras que foram obtidas.
+Linha 3: Agrupa todas as palavras iguais e incrementa o valor de aparição de palavras iguais.
+Linha 4: Salva as palavras e a sua respectiva ocorrência, quantidade de aparições, num arquivo do hdfs.
